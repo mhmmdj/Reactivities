@@ -6,10 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -37,6 +33,11 @@ namespace API
 			{
 				opt.UseSqlite(_config.GetConnectionString("DefaultConnection"));
 			});
+			services.AddCors(opt => {
+				opt.AddPolicy("CorsPolicy", policy => {
+					policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+				});
+			});
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +54,8 @@ namespace API
 
 
       app.UseRouting();
+			
+			app.UseCors("CorsPolicy");
 
       app.UseAuthorization();
 
