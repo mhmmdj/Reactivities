@@ -15,12 +15,12 @@ function App() {
 	}, [])
 	return (
 		<div>
-			<Header as='h2' icon='users' content='Reactivities' color='blue'/>
-				<List>
-					{activities.map((activity: any) => (
-						<List.Item key={activity.id}>{activity.title}</List.Item>
-					))}
-				</List>
+			<Header as='h2' icon='users' content='Reactivities' color='blue' />
+			<List>
+				{activities.map((activity: any) => (
+					<List.Item key={activity.id}>{activity.title}</List.Item>
+				))}
+			</List>
 		</div>
 	)
 }
