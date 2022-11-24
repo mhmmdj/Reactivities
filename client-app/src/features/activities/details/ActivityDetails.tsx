@@ -1,38 +1,49 @@
-import React from 'react'
+import { observer } from 'mobx-react-lite'
+import React, { useEffect } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { Button, Card, Image } from 'semantic-ui-react'
-import { Activity } from '../../../App/Model/Activity'
+import LoadingComponent from '../../../App/Layout/LoadingComponent'
+import { useStore } from '../../../App/stores/Store'
+import { animateScroll } from 'react-scroll'
+export default observer(function ActivityDetails() {
+	const { activityStore } = useStore()
+	const { selectedActivity, loadActivity, loadingInitial } = activityStore
+	const { id } = useParams()
 
-interface Props {
-	activity: Activity
-	cancelSelectActivity: () => void
-	openForm: (id: string) => void
-}
+	useEffect(() => {
+		if (id) loadActivity(id)
+		// console.log(`id: ${id}`)
+		animateScroll.scrollToTop({ duration: 0 })
+	}, [id, loadActivity])
 
-export default function ActivityDetails({
-	activity,
-	cancelSelectActivity,
-	openForm,
-}: Props) {
+	// console.log(`loadingInitial: ${loadingInitial}`)
+	// console.log('activity:', selectedActivity)
+
+	if (loadingInitial || !selectedActivity) return <LoadingComponent />
+
 	return (
 		<Card fluid>
-			<Image src={`/assets/categoryImages/${activity.category}.jpg`} />
+			<Image src={`/assets/categoryImages/${selectedActivity.category}.jpg`} />
 			<Card.Content>
-				<Card.Header>{activity.title}</Card.Header>
+				<Card.Header>{selectedActivity.title}</Card.Header>
 				<Card.Meta>
-					<span>{activity.date}</span>
+					<span>{selectedActivity.date}</span>
 				</Card.Meta>
-				<Card.Description>{activity.description}</Card.Description>
+				<Card.Description>{selectedActivity.description}</Card.Description>
 			</Card.Content>
 			<Card.Content extra>
 				<Button.Group widths='2'>
 					<Button
-						onClick={cancelSelectActivity}
+						as={Link}
+						to='..'
+						relative='path'
 						basic
 						content='Cancel'
 						color='grey'
 					/>
 					<Button
-						onClick={() => openForm(activity.id)}
+						as={Link}
+						to={`/manage/${selectedActivity.id}`}
 						basic
 						content='Edit'
 						color='blue'
@@ -41,4 +52,4 @@ export default function ActivityDetails({
 			</Card.Content>
 		</Card>
 	)
-}
+})

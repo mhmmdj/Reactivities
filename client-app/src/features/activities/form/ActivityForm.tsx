@@ -1,20 +1,26 @@
-import React, { ChangeEvent, useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { animateScroll } from 'react-scroll'
 import { Button, Form, Segment } from 'semantic-ui-react'
+import LoadingComponent from '../../../App/Layout/LoadingComponent'
 import { Activity } from '../../../App/Model/Activity'
+import { useStore } from '../../../App/stores/Store'
+import { v4 as uuid } from 'uuid'
 
-interface Props {
-	selectedActivity: Activity | undefined
-	closeForm: () => void
-	createOrEdit: (activity: Activity) => void
-	submitting: boolean
-}
+export default observer(function ActivityForm() {
+	const { activityStore } = useStore()
+	const {
+		createActivity,
+		updateActivity,
+		loading_Form,
+		loadActivity,
+		loadingInitial,
+		setLoadingInitial,
+	} = activityStore
+	const { id } = useParams()
+	const navigate = useNavigate()
 
-export default function ActivityForm({
-	selectedActivity,
-	closeForm,
-	createOrEdit,
-	submitting
-}: Props) {
 	const emptyActivity: Activity = {
 		id: '',
 		title: '',
@@ -24,13 +30,24 @@ export default function ActivityForm({
 		city: '',
 		venue: '',
 	}
+	const [activity, setActivity] = useState(emptyActivity)
 
-	const initialState = selectedActivity ?? emptyActivity
-
-	const [activity, setActivity] = useState(initialState)
+	useEffect(() => {
+		if (id) loadActivity(id).then((activity) => setActivity(activity!))
+		setLoadingInitial(false)
+		animateScroll.scrollToTop({ duration: 0 })
+	}, [id, loadActivity, setLoadingInitial])
 
 	function HandleSubmit() {
-		createOrEdit(activity)
+		if (activity.id.length === 0)  {
+			let newActivity = {
+				...activity,
+				id: uuid()
+			}
+			createActivity(newActivity).then(() => navigate(`/activities/${newActivity.id}`))
+		} else {
+			updateActivity(activity).then(() => navigate(`/activities/${activity.id}`))
+		}
 	}
 
 	function HandleInputChange(
@@ -39,6 +56,8 @@ export default function ActivityForm({
 		const { name, value } = event.target
 		setActivity({ ...activity, [name]: value })
 	}
+
+	if (loadingInitial) return <LoadingComponent content='Loading activity...' />
 
 	return (
 		<Segment>
@@ -87,16 +106,16 @@ export default function ActivityForm({
 					name='venue'
 				/>
 				<Button.Group widths='2'>
+					<Button as={Link} to='/activities' basic type='button' color='grey' content='Cancel' />
 					<Button
-						onClick={closeForm}
+						loading={loading_Form}
 						basic
-						type='button'
-						color='grey'
-						content='Cancel'
+						type='submit'
+						color='green'
+						content='Submit'
 					/>
-					<Button loading={submitting} basic type='submit' color='green' content='Submit' />
 				</Button.Group>
 			</Form>
 		</Segment>
 	)
-}
+})

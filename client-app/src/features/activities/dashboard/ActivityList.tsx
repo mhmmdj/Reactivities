@@ -1,20 +1,14 @@
-import React, { SyntheticEvent, useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { animateScroll } from 'react-scroll'
 import { Button, Item, Label, Segment } from 'semantic-ui-react'
-import { Activity } from '../../../App/Model/Activity'
+import { useStore } from '../../../App/stores/Store'
 
-interface Props {
-	activities: Activity[]
-	selectActivity: (id: string) => void
-	deleteActivity: (id: string) => void
-	submitting: boolean
-}
+export default observer(function ActivityList() {
+	const { activityStore } = useStore()
+	const { activitiesByDate, deleteActivity, loading_List } = activityStore
 
-export default function ActivityList({
-	activities,
-	selectActivity,
-	deleteActivity,
-	submitting,
-}: Props) {
 	const [target, setTarget] = useState('')
 
 	function HandleDeleteActivity(
@@ -25,10 +19,12 @@ export default function ActivityList({
 		deleteActivity(id)
 	}
 
+	useEffect(() => animateScroll.scrollToTop({ duration: 0 }), [])
+
 	return (
 		<Segment>
 			<Item.Group divided>
-				{activities.map(
+				{activitiesByDate.map(
 					({ title, date, description, city, venue, id, category }, i) => (
 						<Item key={i}>
 							<Item.Content>
@@ -44,14 +40,15 @@ export default function ActivityList({
 								</Item.Description>
 								<Item.Extra>
 									<Button
-										onClick={() => selectActivity(id)}
+										as={Link}
+										to={`${id}`}
 										floated='right'
 										content='View'
 										color='blue'
 									/>
 									<Button
 										name={id}
-										loading={submitting && target === id}
+										loading={loading_List && target === id}
 										onClick={(e) => HandleDeleteActivity(e, id)}
 										basic
 										floated='right'
@@ -67,4 +64,4 @@ export default function ActivityList({
 			</Item.Group>
 		</Segment>
 	)
-}
+})

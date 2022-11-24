@@ -1,15 +1,12 @@
 import React from 'react'
+import { Link, NavLink } from 'react-router-dom'
 import { Button, Container, Menu } from 'semantic-ui-react'
 
-interface Props {
-	openForm: () => void
-}
-
-export default function NavBar({ openForm }: Props) {
+export default function NavBar() {
 	return (
 		<Menu inverted fixed='top'>
 			<Container>
-				<Menu.Item hearder="true">
+				<Menu.Item hearder='true' as={NavLink} to='/'>
 					<img
 						src='/assets/logo.png'
 						alt='logo'
@@ -17,9 +14,9 @@ export default function NavBar({ openForm }: Props) {
 					/>
 					Reactivities
 				</Menu.Item>
-				<Menu.Item name='Activities' />
-				<Menu.Item>
-					<Button onClick={openForm} positive content='Create Activity' />
+				<Menu.Item name='Activities' as={NavLink} to='activities' />
+				<Menu.Item as={Link} to='createActivity'>
+					<Button positive content='Create Activity' />
 				</Menu.Item>
 			</Container>
 		</Menu>
