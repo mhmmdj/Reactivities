@@ -4,6 +4,7 @@ import './App/Layout/Styles.css'
 import App from './App/Layout/App'
 import reportWebVitals from './reportWebVitals'
 import 'semantic-ui-css/semantic.min.css'
+import 'react-calendar/dist/Calendar.css'
 import { store, StoreContext } from './App/stores/Store'
 import { BrowserRouter } from 'react-router-dom'
 

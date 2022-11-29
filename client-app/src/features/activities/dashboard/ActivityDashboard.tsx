@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom'
 import { Grid } from 'semantic-ui-react'
 import LoadingComponent from '../../../App/Layout/LoadingComponent'
 import { useStore } from '../../../App/stores/Store'
+import ActivityFilters from './ActivityFilters'
 import ActivityList from './ActivityList'
 
 export default observer(function ActivityDashboard() {
@@ -19,10 +20,12 @@ export default observer(function ActivityDashboard() {
 
 	return (
 		<Grid>
-			<Grid.Column width='10'>
+			<Grid.Column width={10}>
 				<ActivityList />
 			</Grid.Column>
-			<Grid.Column width='6'></Grid.Column>
+			<Grid.Column width={6}>
+				<ActivityFilters />
+			</Grid.Column>
 			<Outlet />
 		</Grid>
 	)
