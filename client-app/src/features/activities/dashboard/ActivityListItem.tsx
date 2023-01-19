@@ -24,8 +24,9 @@ export default function ActivityItemList({ activity }: Props) {
 				</Item.Group>
 			</Segment>
 			<Segment>
-				<span>
+				<span className='spanDemo'>
 					<Icon name='clock' /> {activity.date}
+					<div></div>
 					<Icon name='marker' /> {activity.venue}
 				</span>
 			</Segment>

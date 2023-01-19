@@ -1,6 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import agent from '../api/agent'
 import { Activity } from '../Model/Activity'
+import { validate as uuidValidate } from 'uuid'
+import { router } from '../router/Routes'
 
 export default class ActivityStore {
 	activityRegistry = new Map<string, Activity>()
@@ -15,7 +17,7 @@ export default class ActivityStore {
 	}
 
 	get activitiesByDate() {
-		return Array.from(this.activityRegistry.values()).sort(
+		return [...this.activityRegistry.values()].sort(
 			(a, b) => Date.parse(a.date) - Date.parse(b.date)
 		)
 	}
@@ -36,12 +38,10 @@ export default class ActivityStore {
 		this.loadingInitial = true
 		try {
 			const activities = await agent.activities.list()
-			for (let activity of activities) {
-				this.setActivity(activity)
-			}
-			this.setLoadingInitial(false)
+			for (let activity of activities) this.setActivity(activity)
 		} catch (error) {
 			console.log(error)
+		} finally {
 			this.setLoadingInitial(false)
 		}
 	}
@@ -53,14 +53,19 @@ export default class ActivityStore {
 			return activity
 		} else {
 			this.setLoadingInitial(true)
-			try {
-				activity = await agent.activities.details(id)
-				this.setActivity(activity)
-				this.setSelectedActivity(activity)
-				this.setLoadingInitial(false)
-				return activity
-			} catch (error) {
-				console.log(error)
+			if (uuidValidate(id)) {
+				try {
+					activity = await agent.activities.details(id)
+					this.setActivity(activity)
+					this.setSelectedActivity(activity)
+					return activity
+				} catch (error) {
+					console.log('ActivityStore catch: ', error)
+				} finally {
+					this.setLoadingInitial(false)
+				}
+			} else {
+				router.navigate('/not-found')
 				this.setLoadingInitial(false)
 			}
 		}

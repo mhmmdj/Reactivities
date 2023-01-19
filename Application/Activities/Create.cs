@@ -1,34 +1,43 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Application.Core;
 using Domain;
+using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Persistence;
 
 namespace Application.Activities;
 
 public class Create
 {
-	public class Command : IRequest
+	public class Command : IRequest<Result<Unit>>, IActivityContainer<RawActivity>
 	{
-		public Activity Activity { get; set; }
+		public RawActivity? Activity { get; set; }
 	}
 
-	public class Handler : IRequestHandler<Command>
+	public class Handler : IRequestHandler<Command, Result<Unit>>
 	{
-    private readonly DataContext _context;
+		private static IValidator<Command> _validator = new CommandActivityValidator();
+
+		private readonly DataContext _context;
 		public Handler(DataContext context)
 		{
-      _context = context;
+			_context = context;
 		}
 
-		public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+		public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 		{
-			_context.Activities.Add(request.Activity);
-			await _context.SaveChangesAsync();
-			return Unit.Value;
+			var result = _validator.Validate(request);
+			if (!result.IsValid)
+			{
+				var modelState = new ModelStateDictionary();
+				result.AddErrorToModelState(modelState);
+				return Result<Unit>.Failure(modelState);
+			}
+			var activity = request.Activity!.ConvertToActivity();
+			_context.Activities!.Add(activity);
+			var changed = await _context.SaveChangesAsync() > 0;
+			if (!changed) return Result<Unit>.Failure("Create Error", "Failed to create new Activity.", Responses.Server);
+			return Result<Unit>.Success(Unit.Value);
 		}
 	}
-
 }

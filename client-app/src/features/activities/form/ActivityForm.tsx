@@ -35,18 +35,22 @@ export default observer(function ActivityForm() {
 	useEffect(() => {
 		if (id) loadActivity(id).then((activity) => setActivity(activity!))
 		setLoadingInitial(false)
-		animateScroll.scrollToTop({ duration: 0 })
+		animateScroll.scrollToTop()
 	}, [id, loadActivity, setLoadingInitial])
 
 	function HandleSubmit() {
-		if (activity.id.length === 0)  {
+		if (activity.id.length === 0) {
 			let newActivity = {
 				...activity,
-				id: uuid()
+				id: uuid(),
 			}
-			createActivity(newActivity).then(() => navigate(`/activities/${newActivity.id}`))
+			createActivity(newActivity).then(() =>
+				navigate(`/activities/${newActivity.id}`)
+			)
 		} else {
-			updateActivity(activity).then(() => navigate(`/activities/${activity.id}`))
+			updateActivity(activity).then(() =>
+				navigate(`/activities/${activity.id}`)
+			)
 		}
 	}
 
@@ -86,7 +90,6 @@ export default observer(function ActivityForm() {
 				<Form.Input
 					type='date'
 					label='Date'
-					placeholder='Date'
 					onChange={HandleInputChange}
 					value={activity.date}
 					name='date'
@@ -106,7 +109,14 @@ export default observer(function ActivityForm() {
 					name='venue'
 				/>
 				<Button.Group widths='2'>
-					<Button as={Link} to='/activities' basic type='button' color='grey' content='Cancel' />
+					<Button
+						as={Link}
+						to='/activities'
+						basic
+						type='button'
+						color='grey'
+						content='Cancel'
+					/>
 					<Button
 						loading={loading_Form}
 						basic

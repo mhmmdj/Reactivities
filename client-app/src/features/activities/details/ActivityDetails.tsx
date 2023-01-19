@@ -9,6 +9,7 @@ import ActivityDetailedHeader from './ActivityDetailedHeader'
 import ActivityDetailedInfo from './ActivityDetailedInfo'
 import ActivityDetailedChat from './ActivityDetailedChat'
 import ActivityDetailedSideBar from './ActivityDetailedSideBar'
+
 export default observer(function ActivityDetails() {
 	const { activityStore } = useStore()
 	const { selectedActivity, loadActivity, loadingInitial } = activityStore

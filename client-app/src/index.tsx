@@ -1,19 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './App/Layout/Styles.css'
-import App from './App/Layout/App'
 import reportWebVitals from './reportWebVitals'
+import './App/Layout/Styles.css'
 import 'semantic-ui-css/semantic.min.css'
 import 'react-calendar/dist/Calendar.css'
+import 'react-toastify/dist/ReactToastify.min.css'
 import { store, StoreContext } from './App/stores/Store'
-import { BrowserRouter } from 'react-router-dom'
+import { RouterProvider } from 'react-router-dom'
+import { router } from './App/router/Routes'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
 	<StoreContext.Provider value={store}>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
+		<RouterProvider router={router}/>
 	</StoreContext.Provider>
 )
 

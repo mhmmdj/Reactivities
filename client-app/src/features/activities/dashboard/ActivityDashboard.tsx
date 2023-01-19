@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
 import { Grid } from 'semantic-ui-react'
 import LoadingComponent from '../../../App/Layout/LoadingComponent'
 import { useStore } from '../../../App/stores/Store'
@@ -26,7 +25,6 @@ export default observer(function ActivityDashboard() {
 			<Grid.Column width={6}>
 				<ActivityFilters />
 			</Grid.Column>
-			<Outlet />
 		</Grid>
 	)
 })

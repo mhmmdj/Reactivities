@@ -17,17 +17,21 @@ public static class ApplicationServiceExtensions
 			});
 		services.AddDbContext<DataContext>(opt =>
 		{
-			opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+			opt.UseSqlite(config.GetConnectionString("DefaultConnection")!);
 		});
 		services.AddCors(opt =>
 		{
 			opt.AddPolicy("CorsPolicy", policyBuilder =>
 			{
-				policyBuilder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+				policyBuilder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
 			});
 		});
 		services.AddMediatR(typeof(List.Handler).Assembly);
 		services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
+		// services.AddFluentValidationAutoValidation();
+		// services.AddFluentValidationClientsideAdapters();
+		// services.AddValidatorsFromAssemblyContaining<Create>();
 
 		return services;
 	}

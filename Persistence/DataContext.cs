@@ -12,5 +12,5 @@ public class DataContext : DbContext
 	}
 
 	// Database table
-	public DbSet<Activity> Activities { get; set; }
+	public DbSet<Activity>? Activities { get; set; }
 }

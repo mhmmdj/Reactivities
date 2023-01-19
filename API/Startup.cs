@@ -1,60 +1,44 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
-using AutoMapper;
-using MediatR;
-using Application.Activities;
-using Application.Core;
 using API.Extensions;
+using API.Middleware;
 
-namespace API
+namespace API;
+
+public class Startup
 {
-  public class Startup
-  {
-    private readonly IConfiguration _config;
-    public Startup(IConfiguration config)
-    {
-      _config = config;
-    }
+	private readonly IConfiguration _config;
+	public Startup(IConfiguration config)
+		=> _config = config;
 
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddControllers();
-			services.AddApplicationServices(_config);
-    }
+	// This method gets called by the runtime. Use this method to add services to the container.
+	public void ConfigureServices(IServiceCollection services)
+	{
+		services.AddControllers();
+		services.AddApplicationServices(_config);
+	}
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPIv5 v1"));
-      }
+	// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+	public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+	{
+		app.UseMiddleware<ExceptionMiddleware>();
 
-      // app.UseHttpsRedirection();
+		// if (env.IsDevelopment())
+		// {
+		// 	app.UseDeveloperExceptionPage();
+		// 	app.UseSwagger();
+		// 	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPIv5 v1"));
+		// }
 
+		// app.UseHttpsRedirection();
 
-      app.UseRouting();
-			
-			app.UseCors("CorsPolicy");
+		app.UseRouting();
 
-      app.UseAuthorization();
+		app.UseCors("CorsPolicy");
 
-      app.UseEndpoints(endpoints =>
-      {
-        endpoints.MapControllers();
-      });
-    }
-  }
+		app.UseAuthorization();
+
+		app.UseEndpoints(endpoints =>
+		{
+			endpoints.MapControllers();
+		});
+	}
 }

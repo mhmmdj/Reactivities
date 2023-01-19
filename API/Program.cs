@@ -18,10 +18,6 @@ namespace API
 				var context = services.GetRequiredService<DataContext>();
 				await context.Database.MigrateAsync();
 				await Seed.SeedData(context);
-
-				var logger = services.GetRequiredService<ILogger<Program>>();
-				EventId eventId = new EventId(303);
-				logger.Log(LogLevel.Information, eventId, $"Number of state entries written to the database: {Seed.count}");
 			}
 			catch (Exception ex)
 			{
